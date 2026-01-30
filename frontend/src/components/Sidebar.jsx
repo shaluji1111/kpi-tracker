@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Users, Plus, UserCircle2, MessageSquare, Send, X } from 'lucide-react';
 import axios from 'axios';
 
-const Sidebar = ({ members, onSelectMember, selectedMemberId, onMemberAdded, isManager, token }) => {
+const Sidebar = ({ members, onSelectMember, selectedMemberId, onMemberAdded, isManager, token, isOpen, onClose }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [newMemberName, setNewMemberName] = useState('');
 
@@ -53,13 +53,28 @@ const Sidebar = ({ members, onSelectMember, selectedMemberId, onMemberAdded, isM
 
     return (
         <>
-            <div className="w-72 bg-white dark:bg-card-bg border-r border-gray-100 dark:border-white/5 h-screen flex flex-col transition-all duration-300 z-20">
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div
+                    onClick={onClose}
+                    className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm transition-opacity"
+                />
+            )}
+
+            <div className={`fixed md:static inset-y-0 left-0 z-40 w-72 bg-white dark:bg-card-bg border-r border-gray-100 dark:border-white/5 h-screen flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+                }`}>
                 {/* Brand */}
-                <div className="p-8 pb-4 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-neon-green to-green-500 flex items-center justify-center shadow-lg shadow-neon-green/20">
-                        <Users className="w-5 h-5 text-black" />
+                <div className="p-8 pb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-neon-green to-green-500 flex items-center justify-center shadow-lg shadow-neon-green/20">
+                            <Users className="w-5 h-5 text-black" />
+                        </div>
+                        <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Team<span className="text-gray-400 dark:text-gray-500 font-normal">Tracker</span></h1>
                     </div>
-                    <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Team<span className="text-gray-400 dark:text-gray-500 font-normal">Tracker</span></h1>
+                    {/* Close Button Mobile */}
+                    <button onClick={onClose} className="md:hidden text-gray-400 hover:text-gray-600">
+                        <X className="w-6 h-6" />
+                    </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 scrollbar-hide">
@@ -69,8 +84,8 @@ const Sidebar = ({ members, onSelectMember, selectedMemberId, onMemberAdded, isM
                         <button
                             onClick={() => onSelectMember('manager')}
                             className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-all duration-200 group ${selectedMemberId === 'manager'
-                                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black font-semibold shadow-lg'
-                                    : 'hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400'
+                                ? 'bg-gray-900 dark:bg-white text-white dark:text-black font-semibold shadow-lg'
+                                : 'hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400'
                                 }`}
                         >
                             <UserCircle2 className="w-5 h-5" />
@@ -91,8 +106,8 @@ const Sidebar = ({ members, onSelectMember, selectedMemberId, onMemberAdded, isM
                                     key={member.id}
                                     onClick={() => onSelectMember(member)}
                                     className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group ${selectedMemberId === member.id
-                                            ? 'bg-neon-green/10 dark:bg-neon-green/10 text-green-700 dark:text-neon-green font-medium border border-neon-green/20'
-                                            : 'hover:bg-gray-50 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 border border-transparent'
+                                        ? 'bg-neon-green/10 dark:bg-neon-green/10 text-green-700 dark:text-neon-green font-medium border border-neon-green/20'
+                                        : 'hover:bg-gray-50 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 border border-transparent'
                                         }`}
                                 >
                                     <span>{member.name}</span>
@@ -187,8 +202,8 @@ const Sidebar = ({ members, onSelectMember, selectedMemberId, onMemberAdded, isM
                                     value={feedbackContent}
                                     onChange={(e) => setFeedbackContent(e.target.value)}
                                     className={`w-full h-40 bg-gray-50 dark:bg-dark-bg border rounded-xl p-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 resize-none transition-all ${isOverLimit
-                                            ? 'border-red-500 focus:ring-red-500/20'
-                                            : 'border-gray-200 dark:border-white/10 focus:border-neon-green focus:ring-neon-green/20'
+                                        ? 'border-red-500 focus:ring-red-500/20'
+                                        : 'border-gray-200 dark:border-white/10 focus:border-neon-green focus:ring-neon-green/20'
                                         }`}
                                     placeholder="Type your feedback here..."
                                 ></textarea>

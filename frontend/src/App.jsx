@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import Reports from './components/Reports';
-import { LayoutDashboard, FileBarChart, Moon, Sun, Lock, Unlock } from 'lucide-react';
+import { LayoutDashboard, FileBarChart, Moon, Sun, Lock, Unlock, Menu } from 'lucide-react';
 import axios from 'axios';
 
 // Configure Axios Base URL for development
@@ -15,6 +15,7 @@ function App() {
     const [members, setMembers] = useState([]);
     const [selectedMember, setSelectedMember] = useState(null); // null, 'manager', or member object
     const [theme, setTheme] = useState('light');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Auth State
     const [isManager, setIsManager] = useState(false);
@@ -89,16 +90,27 @@ function App() {
                 onSelectMember={(m) => {
                     setSelectedMember(m);
                     setView('dashboard');
+                    setIsMobileMenuOpen(false); // Close menu on selection
                 }}
                 onMemberAdded={fetchMembers}
                 isManager={isManager}
                 token={token}
+                isOpen={isMobileMenuOpen}
+                onClose={() => setIsMobileMenuOpen(false)}
             />
 
-            <div className="flex-1 flex flex-col overflow-hidden relative">
+            <div className="flex-1 flex flex-col overflow-hidden relative w-full">
                 {/* Top Nav */}
-                <header className="h-16 bg-white dark:bg-gray-800 border-b dark:border-gray-700 flex items-center px-8 justify-between shadow-sm z-10 transition-colors duration-200">
+                <header className="h-16 bg-white dark:bg-gray-800 border-b dark:border-gray-700 flex items-center px-4 md:px-8 justify-between shadow-sm z-10 transition-colors duration-200">
                     <div className="flex items-center gap-4">
+                        {/* Mobile Menu Button */}
+                        <button
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className="md:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                        >
+                            <Menu className="w-6 h-6" />
+                        </button>
+
                         <button
                             onClick={() => setView('dashboard')}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${view === 'dashboard'
@@ -106,7 +118,7 @@ function App() {
                                 : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                                 }`}
                         >
-                            <LayoutDashboard className="w-4 h-4" /> Dashboard
+                            <LayoutDashboard className="w-4 h-4" /> <span className="hidden sm:inline">Dashboard</span>
                         </button>
                         <button
                             onClick={() => setView('reports')}
@@ -115,7 +127,7 @@ function App() {
                                 : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                                 }`}
                         >
-                            <FileBarChart className="w-4 h-4" /> Reports
+                            <FileBarChart className="w-4 h-4" /> <span className="hidden sm:inline">Reports</span>
                         </button>
                     </div>
                     <div className="flex items-center gap-4">
@@ -132,14 +144,14 @@ function App() {
                                 onClick={handleLogout}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition"
                             >
-                                <Unlock className="w-4 h-4" /> Logout
+                                <Unlock className="w-4 h-4" /> <span className="hidden sm:inline">Logout</span>
                             </button>
                         ) : (
                             <button
                                 onClick={() => setShowLogin(true)}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition"
                             >
-                                <Lock className="w-4 h-4" /> Login
+                                <Lock className="w-4 h-4" /> <span className="hidden sm:inline">Login</span>
                             </button>
                         )}
                     </div>
